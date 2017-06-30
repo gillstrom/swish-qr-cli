@@ -34,12 +34,12 @@ const cli = meow(`
 	]
 });
 
-const generateImage = res => {
+const generateImage = (res, opts) => {
 	const buf = res.replace('data:image/png;base64,', '');
 
 	termImg(Buffer.from(buf, 'base64'), {
 		fallback: () => {
-			qrcodeTerminal.generate(swishQr.generateString(cli.flags), {small: true});
+			qrcodeTerminal.generate(swishQr.generateString(opts), {small: true});
 		}
 	});
 };
@@ -70,13 +70,13 @@ if (Object.keys(cli.flags).length === 0) {
 		}]
 	}]).then(answers => {
 		swishQr(answers).then(res => {
-			generateImage(res);
+			generateImage(res, answers);
 		});
 	});
 } else {
 	swishQr(cli.flags).then(res => {
 		if (cli.flags.image) {
-			generateImage(res);
+			generateImage(res, cli.flags);
 			return;
 		}
 
